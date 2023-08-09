@@ -32,7 +32,8 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
 class XPathParserTest {
-  private final String resource = "nodelet_test.xml";
+  private final String resource  = "nodelet_test.xml";
+  private final String resmybatis = "mybatis-config.xml";
 
   // InputStream Source
   @Test
