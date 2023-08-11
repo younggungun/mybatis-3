@@ -40,6 +40,7 @@ public class BeanWrapper extends BaseWrapper {
     this.metaClass = MetaClass.forClass(object.getClass(), metaObject.getReflectorFactory());
   }
 
+  // #get(PropertyTokenizer prop) 方法，获得指定属性的值。代码如下：
   @Override
   public Object get(PropertyTokenizer prop) {
     if (prop.getIndex() != null) {

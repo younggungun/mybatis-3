@@ -54,15 +54,36 @@ import org.apache.ibatis.util.MapUtil;
 public class Reflector {
 
   private static final MethodHandle isRecordMethodHandle = getIsRecordMethodHandle();
+
+  /**
+   * 对应的类
+   */
   private final Class<?> type;
+
+  /**
+   * 可读属性数组
+   */
   private final String[] readablePropertyNames;
+
+  /**
+   * 可写属性集合
+   */
   private final String[] writablePropertyNames;
+
+
   private final Map<String, Invoker> setMethods = new HashMap<>();
   private final Map<String, Invoker> getMethods = new HashMap<>();
   private final Map<String, Class<?>> setTypes = new HashMap<>();
   private final Map<String, Class<?>> getTypes = new HashMap<>();
+
+  /**
+   * 默认构造方法
+   */
   private Constructor<?> defaultConstructor;
 
+  /**
+   * 不区分大小写的属性集合
+   */
   private final Map<String, String> caseInsensitivePropertyMap = new HashMap<>();
 
   public Reflector(Class<?> clazz) {
@@ -93,6 +114,7 @@ public class Reflector {
 
   private void addDefaultConstructor(Class<?> clazz) {
     Constructor<?>[] constructors = clazz.getDeclaredConstructors();
+    // todo getParameterTypes和getGenericParameterTypes区别 https://blog.csdn.net/u013066244/article/details/102997214
     Arrays.stream(constructors).filter(constructor -> constructor.getParameterTypes().length == 0).findAny()
         .ifPresent(constructor -> this.defaultConstructor = constructor);
   }
@@ -106,6 +128,7 @@ public class Reflector {
 
   private void resolveGetterConflicts(Map<String, List<Method>> conflictingGetters) {
     for (Entry<String, List<Method>> entry : conflictingGetters.entrySet()) {
+      // 遍历每个属性，查找其最匹配的方法。因为子类可以覆写父类的方法，所以一个属性，可能对应多个 getting 方法
       Method winner = null;
       String propName = entry.getKey();
       boolean isAmbiguous = false;
@@ -285,7 +308,7 @@ public class Reflector {
    *
    * @return An array containing all methods in this class
    */
-  private Method[] getClassMethods(Class<?> clazz) {
+  public static Method[] getClassMethods(Class<?> clazz) {
     Map<String, Method> uniqueMethods = new HashMap<>();
     Class<?> currentClass = clazz;
     while (currentClass != null && currentClass != Object.class) {
@@ -306,9 +329,9 @@ public class Reflector {
     return methods.toArray(new Method[0]);
   }
 
-  private void addUniqueMethods(Map<String, Method> uniqueMethods, Method[] methods) {
+  private static void addUniqueMethods(Map<String, Method> uniqueMethods, Method[] methods) {
     for (Method currentMethod : methods) {
-      if (!currentMethod.isBridge()) {
+      if (!currentMethod.isBridge()) { // todo 忽略 bridge 方法，参见 https://www.zhihu.com/question/54895701/answer/141623158 文章
         String signature = getSignature(currentMethod);
         // check to see if the method is already known
         // if it is known, then an extended class must have
@@ -320,7 +343,7 @@ public class Reflector {
     }
   }
 
-  private String getSignature(Method method) {
+  private static String getSignature(Method method) {
     StringBuilder sb = new StringBuilder();
     Class<?> returnType = method.getReturnType();
     if (returnType != null) {

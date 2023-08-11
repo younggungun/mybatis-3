@@ -38,6 +38,7 @@ public final class PropertyNamer {
           "Error parsing property name '" + name + "'.  Didn't start with 'is', 'get' or 'set'.");
     }
 
+    // 首字母小写
     if (name.length() == 1 || name.length() > 1 && !Character.isUpperCase(name.charAt(1))) {
       name = name.substring(0, 1).toLowerCase(Locale.ENGLISH) + name.substring(1);
     }

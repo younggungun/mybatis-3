@@ -31,7 +31,7 @@ public interface ObjectFactory {
    * @param properties
    *          configuration properties
    */
-  default void setProperties(Properties properties) {
+  default void setProperties(Properties properties) { // 当一个实现类实现多个接口，且多个接口中都有相同的默认方法时，实现类必须重写该默认方法 否则编译错误
     // NOP
   }
 

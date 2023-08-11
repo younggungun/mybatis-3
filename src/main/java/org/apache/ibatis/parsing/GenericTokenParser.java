@@ -20,7 +20,13 @@ package org.apache.ibatis.parsing;
  */
 public class GenericTokenParser {
 
+  /**
+   * 开始的 Token 字符串
+   */
   private final String openToken;
+  /**
+   * 结束的 Token 字符串
+   */
   private final String closeToken;
   private final TokenHandler handler;
 
@@ -44,7 +50,7 @@ public class GenericTokenParser {
     final StringBuilder builder = new StringBuilder();
     StringBuilder expression = null;
     do {
-      if (start > 0 && src[start - 1] == '\\') {
+      if (start > 0 && src[start - 1] == '\\') { //todo 待研究算法
         // this open token is escaped. remove the backslash and continue.
         builder.append(src, offset, start - offset - 1).append(openToken);
         offset = start + openToken.length();

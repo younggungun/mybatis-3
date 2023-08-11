@@ -15,6 +15,8 @@
  */
 package org.apache.ibatis.reflection;
 
+
+import static com.fasterxml.jackson.databind.util.ClassUtil.getClassMethods;
 import static com.googlecode.catchexception.apis.BDDCatchException.caughtException;
 import static com.googlecode.catchexception.apis.BDDCatchException.when;
 import static org.assertj.core.api.BDDAssertions.then;
@@ -23,14 +25,37 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.Serializable;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.ibatis.reflection.invoker.Invoker;
+import org.apache.ibatis.util.MapUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class ReflectorTest {
+
+  @Test
+  void method1() throws ClassNotFoundException, NoSuchMethodException {
+    HashMap<String, List> stringObjectHashMap = new HashMap<>();
+    boolean a = MapUtil.computeIfAbsent(stringObjectHashMap, "a", k -> new ArrayList<String>()).add("1");
+    System.out.println(a);
+    Class<?> aClass = Class.forName("org.apache.ibatis.reflection.Person");
+    Field[] fields = aClass.getDeclaredFields();
+//    Constructor<?>[] declaredConstructors = aClass.getDeclaredConstructors();
+//    Constructor<?>[] constructors = aClass.getConstructors();
+//    Constructor<?> constructor = aClass.getConstructor();
+    Method[] classMethods = Reflector.getClassMethods(aClass);
+//
+//    System.out.println(declaredConstructors);
+//    System.out.println(constructors);
+//    System.out.println(constructor);
+  }
 
   @Test
   void testGetSetterType() {

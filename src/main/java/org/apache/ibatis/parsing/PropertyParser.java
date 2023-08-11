@@ -49,7 +49,7 @@ public class PropertyParser {
   private static final String DEFAULT_VALUE_SEPARATOR = ":";
 
   private PropertyParser() {
-    // Prevent Instantiation
+    // Prevent Instantiation todo <1> ，构造方法，修饰符为 private ，禁止构造 PropertyParser 对象，因为它是一个静态方法的工具类。
   }
 
   public static String parse(String string, Properties variables) {
@@ -60,7 +60,15 @@ public class PropertyParser {
 
   private static class VariableTokenHandler implements TokenHandler {
     private final Properties variables;
+
+    /**
+     * 是否开启默认值功能。默认为 {@link #ENABLE_DEFAULT_VALUE}
+     */
     private final boolean enableDefaultValue;
+
+    /**
+     * 默认值的分隔符。默认为 {@link #KEY_DEFAULT_VALUE_SEPARATOR} ，即 ":" 。
+     */
     private final String defaultValueSeparator;
 
     private VariableTokenHandler(Properties variables) {
@@ -77,6 +85,7 @@ public class PropertyParser {
     public String handleToken(String content) {
       if (variables != null) {
         String key = content;
+        // 开启默认值功能
         if (enableDefaultValue) {
           final int separatorIndex = content.indexOf(defaultValueSeparator);
           String defaultValue = null;

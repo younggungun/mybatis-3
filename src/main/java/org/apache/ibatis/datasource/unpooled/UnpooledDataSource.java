@@ -38,20 +38,36 @@ import org.apache.ibatis.io.Resources;
  */
 public class UnpooledDataSource implements DataSource {
 
+
   private ClassLoader driverClassLoader;
   private Properties driverProperties;
+
+  /**
+   * 已注册的 Driver 映射
+   *
+   * KEY：Driver 类名
+   * VALUE：Driver 对象
+   */
   private static final Map<String, Driver> registeredDrivers = new ConcurrentHashMap<>();
 
+  /**
+   * Driver 类名
+   */
   private String driver;
   private String url;
   private String username;
   private String password;
 
   private Boolean autoCommit;
+
+  /**
+   * 默认事务隔离级别
+   */
   private Integer defaultTransactionIsolationLevel;
   private Integer defaultNetworkTimeout;
 
   static {
+    // 初始化 registeredDrivers
     Enumeration<Driver> drivers = DriverManager.getDrivers();
     while (drivers.hasMoreElements()) {
       Driver driver = drivers.nextElement();
@@ -224,13 +240,17 @@ public class UnpooledDataSource implements DataSource {
   }
 
   private Connection doGetConnection(Properties properties) throws SQLException {
+    // <1> 初始化 Driver
     initializeDriver();
+    // <2> 获得 Connection 对象
     Connection connection = DriverManager.getConnection(url, properties);
+    // <3> 配置 Connection 对象
     configureConnection(connection);
     return connection;
   }
 
   private synchronized void initializeDriver() throws SQLException {
+    // 判断 registeredDrivers 是否已经存在该 driver ，若不存在，进行初始化
     if (!registeredDrivers.containsKey(driver)) {
       Class<?> driverType;
       try {
@@ -242,7 +262,7 @@ public class UnpooledDataSource implements DataSource {
         // DriverManager requires the driver to be loaded via the system ClassLoader.
         // https://www.kfu.com/~nsayer/Java/dyn-jdbc.html
         Driver driverInstance = (Driver) driverType.getDeclaredConstructor().newInstance();
-        DriverManager.registerDriver(new DriverProxy(driverInstance));
+        DriverManager.registerDriver(new DriverProxy(driverInstance)); // todo 创建 DriverProxy 对象，并注册到 DriverManager 中
         registeredDrivers.put(driver, driverInstance);
       } catch (Exception e) {
         throw new SQLException("Error setting driver on UnpooledDataSource. Cause: " + e);

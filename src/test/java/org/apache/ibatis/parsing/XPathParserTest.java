@@ -80,6 +80,15 @@ class XPathParserTest {
   }
 
   @Test
+  void method1(){
+    String a = "Hello, Worlod!";
+    int lo = a.indexOf("lo",4);
+    String substring = a.substring(0, lo);
+    String substring1 = a.substring(lo);
+    System.out.println(lo);
+  }
+
+  @Test
   void constructorWithReaderValidationVariables() throws IOException {
     try (Reader reader = Resources.getResourceAsReader(resource)) {
       XPathParser parser = new XPathParser(reader, false, null);

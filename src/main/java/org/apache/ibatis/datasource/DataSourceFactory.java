@@ -15,6 +15,8 @@
  */
 package org.apache.ibatis.datasource;
 
+import org.apache.ibatis.type.BlobInputStreamTypeHandler;
+
 import java.util.Properties;
 
 import javax.sql.DataSource;
@@ -24,8 +26,19 @@ import javax.sql.DataSource;
  */
 public interface DataSourceFactory {
 
+
+  /**
+   * 设置 DataSource 对象的属性
+   *
+   * @param props 属性
+   */
   void setProperties(Properties props);
 
+  /**
+   * 获得 DataSource 对象
+   * 果你对 {@link DataSource} 如何实现分库分表的功能，可以看看 《Sharding-JDBC 源码分析 —— JDBC实现与读写分离》 。
+   * @return DataSource 对象
+   */
   DataSource getDataSource();
 
 }
